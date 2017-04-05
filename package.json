@@ -1,10 +1,19 @@
 {
   "name": "de5",
   "version": "1.0.12",
-  "description": "",
+  "description": "The definer can translate text of any language to Vietnamses, search from https://google.com, go to github repositoty by name",
   "main": "index.js",
-   "bin": {
+  "keywords": [
+    "definer",
+    "search",
+    "github repo"
+  ],
+  "bin": {
     "de5": "index.js"
+  },
+  "homepage": "https://github.com/tungptvn/de5",
+  "bugs": {
+    "url": "https://github.com/tungptvn/de5/issues"
   },
   "dependencies": {
     "colors": "^1.1.2",
@@ -14,6 +23,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "tungptvn",
+  "author": "tungptvn  <tungpt.hd@gmail.com>",
   "license": "ISC"
 }

@@ -1,3 +1,5 @@
+>The definer can translate text of any language to Vietnamses, search from https://google.com, go to github repositoty by name
+
 ### install
 `npm install de5 -g`
 ### use
