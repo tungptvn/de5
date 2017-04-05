@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 var http = require('axios');
 const cheerio = require('cheerio');
 var exec = require('child_process').exec;
@@ -58,22 +59,27 @@ http.get('http://dictionary.cambridge.org/dictionary/english/' + inputText)
         $('.pron-info').each((id, el) => {
             spells[id] = $(el).text().replace("​\n\t\t\t", "").replace('  ', "");
         })
-        console.log(colors.yellow(spells));
+        if (spells.length !== 0)
+            console.log(colors.yellow(spells));
         var defs = [];
         $('.def').each((id, el) => {
             defs[id] = $(el).text();
         })
+        if (defs.length == 0) {
+            console.log(colors.red("nil"))
+            return
+        }
         if (defs.length > 4) defs = defs.slice(0, 3);
         defs.forEach((v, i) => {
-            console.log(colors.blue(++i+'. ' + v))
+            console.log(colors.blue(++i + '. ' + v))
         })
         var exs = [];
         $('.examp.emphasized').each((id, el) => {
             exs[id] = $(el).text()
         });
-        console.log("examples:")
         if (exs.length > 4) exs = exs.slice(0, 3);
+        if (exs.length > 0) console.log("examples:")
         exs.forEach((v, i) => {
-            console.log( '\t -' + colors.green(v))
+            console.log('\t -' + colors.green(v))
         })
     })
