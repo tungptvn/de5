@@ -1,0 +1,19 @@
+{
+  "name": "de5",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+   "bin": {
+    "de5": "index.js"
+  },
+  "dependencies": {
+    "colors": "^1.1.2",
+    "google-translate-api": "^2.2.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "tungptvn",
+  "license": "ISC"
+}
