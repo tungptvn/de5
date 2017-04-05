@@ -1,6 +1,6 @@
 {
   "name": "de5",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "The definer can translate text of any language to Vietnamses, search from https://google.com, go to github repositoty by name",
   "main": "index.js",
   "keywords": [

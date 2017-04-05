@@ -2,6 +2,7 @@
 
 ### install
 `npm install de5 -g`
+
 ### use
 - translate any to Vietnamese
     `de5 some text` => `Một số văn bản`
