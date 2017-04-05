@@ -1,22 +1,37 @@
+#!/usr/bin/env node
+
 const translate = require('google-translate-api');
-var exec = require('child_process').exec
-var spawn = require('child_process').spawn
+var exec = require('child_process').exec;
+var spawn = require('child_process').spawn;
 var colors = require('colors');
-if (process.argv.length < 2) {
+var args = process.argv;
+if (args < 3) {
     console.log(colors.yellow("pls input some text"));
     return;
 }
-switch (process.argv[2]) {
-    case "o":
-        var query = process.argv.slice(2).reduce((pre, cur, curIndex, arr) => {
+switch (args[2]) {
+    case "gg":
+        var query = args.slice(3).reduce((pre, cur, curIndex, arr) => {
             return `${pre} ${cur}`;
         })
         query = encodeURI(query);
         var url = `https://www.google.com/search?q=${query}`;
         openURL(url)
-        break;
+        return;
+    case "gh":
+        exec('npm view ' + args[3], function (err, res) {
+            if (err) throw err
+            var re = /'(git:|https:|git+https:)\/\/(github\.com\/.*?)(\.git)?'/;
+            var match = res.match(re)
+            if (match) {
+                var url = match[2].replace(/\/issues$/, '')
+                openURL('https://' + url)
+            } else {
+                console.log('Can\'t find a github page for package: ' + colors.yellow(name))
+            }
+        })
+        return;
 
-    
 }
 
 function openURL(url) {
@@ -31,7 +46,7 @@ function openURL(url) {
             spawn('xdg-open', [url])
     }
 }
-var inputText = process.argv.slice(2).reduce((pre, cur, curIndex, arr) => {
+var inputText = args.slice(2).reduce((pre, cur, curIndex, arr) => {
     return `${pre} ${cur}`;
 })
 
@@ -40,11 +55,15 @@ translate(inputText, {
     raw: true
 }).then(res => {
     var spell = "";
-    if (process.argv.length == 2) {
+    if (args.length == 3) {
         const regex = /\[,,,"([^"]+)"/gu;
         spell = res.raw.match(regex);
+        if (!spell) {
+            console.log(colors.blue("nil"));
+            return;
+        }
         spell = spell.toString().replace("[,,,", '').replace("'", '');
-        console.log(colors.grey(spell) + ': ' + colors.green(res.text));
+        console.log(colors.magenta(spell) + ': ' + colors.green(res.text));
         return;
     }
     console.log(colors.green(res.text));
@@ -52,4 +71,3 @@ translate(inputText, {
 }).catch(err => {
     console.error(err);
 });
-
