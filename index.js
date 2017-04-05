@@ -16,8 +16,7 @@ switch (process.argv[2]) {
         openURL(url)
         break;
 
-    default:
-        break;
+    
 }
 
 function openURL(url) {
@@ -53,3 +52,4 @@ translate(inputText, {
 }).catch(err => {
     console.error(err);
 });
+
