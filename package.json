@@ -1,7 +1,7 @@
 {
   "name": "de5",
-  "version": "1.0.13",
-  "description": "The definer can translate text of any language to Vietnamses, search from https://google.com, go to github repositoty by name",
+  "version": "1.1.0",
+  "description": "en-en dictionay, google searching, npm packages's github source ",
   "main": "index.js",
   "keywords": [
     "definer",
@@ -15,7 +15,13 @@
   "bugs": {
     "url": "https://github.com/tungptvn/de5/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tungptvn/de5"
+  },
   "dependencies": {
+    "axios": "^0.16.0",
+    "cheerio": "^0.22.0",
     "colors": "^1.1.2",
     "google-translate-api": "^2.2.2"
   },

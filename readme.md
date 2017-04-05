@@ -1,10 +1,10 @@
->The definer can translate text of any language to Vietnamses, search from https://google.com, go to github repositoty by name
+>en-en dictionay, search from google, go to github repositoty by name
 
 ### install
 `npm install de5 -g`
 
 ### use
-- translate any to Vietnamese
-    `de5 some text` => `Một số văn bản`
+- en-en dictionary: `de5 computer` => "an electronic machine that is used for storing, organizing, and finding words, numbers, and pictures, for doing calculat
+ions, and for controlling other machines"
 - go to github `de5 gh jquery`
 - google search `de5 gg jquery`

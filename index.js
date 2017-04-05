@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-
-const translate = require('google-translate-api');
+var http = require('axios');
+const cheerio = require('cheerio');
 var exec = require('child_process').exec;
 var spawn = require('child_process').spawn;
 var colors = require('colors');
@@ -47,27 +47,33 @@ function openURL(url) {
     }
 }
 var inputText = args.slice(2).reduce((pre, cur, curIndex, arr) => {
-    return `${pre} ${cur}`;
+    return `${pre}-${cur}`;
 })
 
-translate(inputText, {
-    to: 'vi',
-    raw: true
-}).then(res => {
-    var spell = "";
-    if (args.length == 3) {
-        const regex = /\[,,,"([^"]+)"/gu;
-        spell = res.raw.match(regex);
-        if (!spell) {
-            console.log(colors.blue("nil"));
-            return;
-        }
-        spell = spell.toString().replace("[,,,", '').replace("'", '');
-        console.log(colors.magenta(spell) + ': ' + colors.green(res.text));
-        return;
-    }
-    console.log(colors.green(res.text));
-    // console.log(res.raw);
-}).catch(err => {
-    console.error(err);
-});
+
+http.get('http://dictionary.cambridge.org/dictionary/english/' + inputText)
+    .then(data => {
+        const $ = cheerio.load(data.data);
+        var spells = [];
+        $('.pron-info').each((id, el) => {
+            spells[id] = $(el).text().replace("​\n\t\t\t", "").replace('  ', "");
+        })
+        console.log(colors.yellow(spells));
+        var defs = [];
+        $('.def').each((id, el) => {
+            defs[id] = $(el).text();
+        })
+        if (defs.length > 4) defs = defs.slice(0, 3);
+        defs.forEach((v, i) => {
+            console.log(colors.blue(++i+'. ' + v))
+        })
+        var exs = [];
+        $('.examp.emphasized').each((id, el) => {
+            exs[id] = $(el).text()
+        });
+        console.log("examples:")
+        if (exs.length > 4) exs = exs.slice(0, 3);
+        exs.forEach((v, i) => {
+            console.log( '\t -' + colors.green(v))
+        })
+    })
