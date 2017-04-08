@@ -59,12 +59,17 @@ var inputText = args.slice(2).reduce((pre, cur, curIndex, arr) => {
 http.get('http://dictionary.cambridge.org/dictionary/english/' + inputText)
     .then(data => {
         const $ = cheerio.load(data.data);
+        var pos = [];
+        $('.posgram').each((id, el) => {
+            pos[id] = $(el).text();
+        })
+        console.log(('[Gra] \t') + colors.yellow(pos.filter((v, i, a) => a.indexOf(v) === i)));
         var spells = [];
         $('.pron-info').each((id, el) => {
             spells[id] = $(el).text().replace("​\n\t\t\t", "").replace('  ', "");
         })
         if (spells.length !== 0)
-            console.log(colors.yellow(spells));
+            console.log('[Pro] \t' + colors.yellow(spells.filter((v, i, a) => a.indexOf(v) === i)));
         var defs = [];
         $('.def').each((id, el) => {
             defs[id] = $(el).text();
@@ -74,18 +79,24 @@ http.get('http://dictionary.cambridge.org/dictionary/english/' + inputText)
             return
         }
         if (defs.length > 4) defs = defs.slice(0, 3);
+        let strDef = "";
         defs.forEach((v, i) => {
-            console.log(colors.blue(++i + '. ' + v))
+            strDef += colors.green('\t' + ++i + '. ' + v + ((i!== (defs.length))? '\n':'') );
         })
+        if (defs.length > 0) console.log("[Def]" + strDef);
+
+
         var exs = [];
         $('.examp.emphasized').each((id, el) => {
             exs[id] = $(el).text()
         });
         if (exs.length > 4) exs = exs.slice(0, 3);
-        if (exs.length > 0) console.log("examples:")
+        let strExs = "";
         exs.forEach((v, i) => {
-            console.log('\t -' + colors.green(v))
+            strExs += colors.green('\t' + ++i + '. ' + v + ((i!== (exs.length))? '\n':'') );
         })
+        if (exs.length > 0) console.log("[Exs]" + strExs);
+
         if (/-sp/.test(process.title)) {
             if (!process.platform == 'win32') return;
 
@@ -104,4 +115,23 @@ http.get('http://dictionary.cambridge.org/dictionary/english/' + inputText)
                 sp.play();
             }
         }
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    var lst =[3,2,3];
+    lst.forEach((v,i,a)=>{
+
     })
