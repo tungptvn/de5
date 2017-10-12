@@ -25,7 +25,7 @@ rl.on('line', (line) => {
         case 'help':
             console.log(`\n exit \t exit application` +
                 `\n !sp \t enable or disable the Speaker` +
-                `\n !spul \t enable or disable the Speaker (required enable the Speaker)`)
+                `\n !spuk \t enable or disable the Speaker (required enable the Speaker)`)
             break
 
         case 'exit':
