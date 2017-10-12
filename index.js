@@ -7,131 +7,110 @@ var spawn = require('child_process').spawn;
 var colors = require('colors');
 var Speaker = require('./speacker');
 
-var args = process.argv.filter(x => !/-/.test(x));
+const readline = require('readline')
+console.log('type any word to show define')
+console.log('type `help` to show help')
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    prompt: '_> '
+});
 
-if (args < 3) {
-    console.log(colors.yellow("pls input some text"));
-    return;
-}
+rl.prompt();
+var ENABLE_SPEAKER = false
+var ENABLE_SPEAKER_UK = false
+rl.on('line', (line) => {
+    var word = line.trim().toLowerCase()
+    switch (word) {
+        case 'help':
+            console.log(`\n exit \t exit application` +
+                `\n !sp \t enable or disable the Speaker` +
+                `\n !spul \t enable or disable the Speaker (required enable the Speaker)`)
+            break
 
-if (/-gg/.test(process.title)) {
-    var query = args.slice(2).reduce((pre, cur, curIndex, arr) => {
-        return `${pre} ${cur}`;
-    })
-    query = encodeURI(query);
-    var url = `https://www.google.com/search?q=${query}`;
-    openURL(url)
-    return;
-}
-if (/-gh/.test(process.title)) {
-    exec('npm view ' + args[2], function (err, res) {
-        if (err) throw err
-        var re = /'(git:|https:|git+https:)\/\/(github\.com\/.*?)(\.git)?'/;
-        var match = res.match(re)
-        if (match) {
-            var url = match[2].replace(/\/issues$/, '')
-            openURL('https://' + url)
-        } else {
-            console.log('Can\'t find a github page for package: ' + colors.yellow(name))
-        }
-    })
-    return;
-}
-
-
-function openURL(url) {
-    switch (process.platform) {
-        case "darwin":
-            exec('open ' + url)
+        case 'exit':
+            rl.close();
             break;
-        case "win32":
-            exec('start ' + url)
-            break;
+        case '!sp':
+            ENABLE_SPEAKER = !ENABLE_SPEAKER
+            console.log('ENABLE_SPEAKER : ', ENABLE_SPEAKER)
+            break
+        case '!spuk':
+            ENABLE_SPEAKER_UK = !ENABLE_SPEAKER_UK
+            console.log('ENABLE_SPEAKER_UK', ENABLE_SPEAKER_UK)
+            break
+
         default:
-            spawn('xdg-open', [url])
+            doLook(word)
+            break;
     }
-}
-var inputText = args.slice(2).reduce((pre, cur, curIndex, arr) => {
-    return `${pre}-${cur}`;
-})
+    rl.prompt();
+}).on('close', () => {
+    console.log('Have a great day!');
+    process.exit(0);
+});
 
 
-http.get('http://dictionary.cambridge.org/dictionary/english/' + inputText)
-    .then(data => {
-        const $ = cheerio.load(data.data);
-        var pos = [];
-        $('.posgram').each((id, el) => {
-            pos[id] = $(el).text();
-        })
-        console.log(('[Gra] \t') + colors.yellow(pos.filter((v, i, a) => a.indexOf(v) === i)));
-        var spells = [];
-        $('.pron-info').each((id, el) => {
-            spells[id] = $(el).text().replace("​\n\t\t\t", "").replace('  ', "");
-        })
-        if (spells.length !== 0)
-            console.log('[Pro] \t' + colors.yellow(spells.filter((v, i, a) => a.indexOf(v) === i)));
-        var defs = [];
-        $('.def').each((id, el) => {
-            defs[id] = $(el).text();
-        })
-        if (defs.length == 0) {
-            console.log(colors.red("nil"))
-            return
-        }
-        if (defs.length > 4) defs = defs.slice(0, 3);
-        let strDef = "";
-        defs.forEach((v, i) => {
-            strDef += colors.green('\t' + ++i + '. ' + v + ((i!== (defs.length))? '\n':'') );
-        })
-        if (defs.length > 0) console.log("[Def]" + strDef);
+doLook = function (inputText) {
+    http.get('http://dictionary.cambridge.org/dictionary/english/' + inputText)
+        .then(data => {
+            const $ = cheerio.load(data.data);
+            var pos = [];
+            $('.posgram').each((id, el) => {
+                pos[id] = $(el).text();
+            })
+            if (pos.length > 0) console.log(('[Gra] \t') + colors.yellow(pos.filter((v, i, a) => a.indexOf(v) === i)));
+            var spells = [];
+            $('.pron-info').each((id, el) => {
+                spells[id] = $(el).text().replace("​\n\t\t\t", "").replace('  ', "");
+            })
+            if (spells.length !== 0)
+                console.log('[Pro] \t' + colors.yellow(spells.filter((v, i, a) => a.indexOf(v) === i)));
+            var defs = [];
+            $('.def').each((id, el) => {
+                defs[id] = $(el).text();
+            })
+            if (defs.length == 0) {
+                console.log(colors.red("nil"))
+                return
+            }
+            if (defs.length > 4) defs = defs.slice(0, 3);
+            let strDef = "";
+            defs.forEach((v, i) => {
+                strDef += colors.green('\t' + ++i + '. ' + v + ((i !== (defs.length)) ? '\n' : ''));
+            })
+            if (defs.length > 0) console.log("[Def]" + strDef);
 
 
-        var exs = [];
-        $('.examp.emphasized').each((id, el) => {
-            exs[id] = $(el).text()
-        });
-        if (exs.length > 4) exs = exs.slice(0, 3);
-        let strExs = "";
-        exs.forEach((v, i) => {
-            strExs += colors.green('\t' + ++i + '. ' + v + ((i!== (exs.length))? '\n':'') );
-        })
-        if (exs.length > 0) console.log("[Exs]" + strExs);
+            var exs = [];
+            $('.examp.emphasized').each((id, el) => {
+                exs[id] = $(el).text()
+            });
+            if (exs.length > 4) exs = exs.slice(0, 3);
+            let strExs = "";
+            exs.forEach((v, i) => {
+                strExs += colors.green('\t' + ++i + '. ' + v + ((i !== (exs.length)) ? '\n' : ''));
+            })
+            if (exs.length > 0) console.log("[Exs]" + strExs);
 
-        if (/-sp/.test(process.title)) {
-            if (!process.platform == 'win32') return;
+            if (ENABLE_SPEAKER) {
+                if (ENABLE_SPEAKER_UK) {
+                    var mp3UrlUS = $('.audio_play_button', '.uk').attr('data-src-mp3');
+                    if (mp3UrlUS) {
+                        var sp = new Speaker(mp3UrlUS);
+                        sp.play();
+                        return;
+                    }
 
-            if (/uk/.test(process.title)) {
-                var mp3UrlUS = $('.audio_play_button', '.uk').attr('data-src-mp3');
-                if (mp3UrlUS) {
-                    var sp = new Speaker(mp3UrlUS);
-                    sp.play();
-                    return;
+                } else {
+                    var mp3UrlUS = $('.audio_play_button', '.us').attr('data-src-mp3');
+                    if (mp3UrlUS) {
+                        var sp = new Speaker(mp3UrlUS);
+                        sp.play();
+                    }
                 }
 
             }
-            var mp3UrlUK = $('.audio_play_button', '.us').attr('data-src-mp3');
-            if (mp3UrlUK) {
-                var sp = new Speaker(mp3UrlUK);
-                sp.play();
-            }
-        }
-    })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    var lst =[3,2,3];
-    lst.forEach((v,i,a)=>{
-
-    })
+        })
+}
