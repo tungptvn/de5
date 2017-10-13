@@ -13,15 +13,15 @@ console.log('type `help` to show help')
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
-    prompt: '_> '
+    prompt: '>_ '
 });
 
 rl.prompt();
 var ENABLE_SPEAKER = false
 var ENABLE_SPEAKER_UK = false
 rl.on('line', (line) => {
-    var word = line.trim().toLowerCase()
-    switch (word) {
+    
+    switch (line.trim().toLowerCase()) {
         case 'help':
             console.log(`\n exit \t exit application` +
                 `\n !sp \t enable or disable the Speaker` +
@@ -41,7 +41,7 @@ rl.on('line', (line) => {
             break
 
         default:
-            doLook(word)
+            doLook(line.trim().toLowerCase())
             break;
     }
     rl.prompt();
@@ -107,6 +107,7 @@ doLook = function (inputText) {
                     if (mp3UrlUS) {
                         var sp = new Speaker(mp3UrlUS);
                         sp.play();
+						return;
                     }
                 }
 
